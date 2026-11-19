@@ -1,3 +1,5 @@
+ci:
+  skip: [bats-tests]
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
@@ -21,3 +23,12 @@ repos:
   rev: v0.11.0.1-1
   hooks:
   - id: shellcheck
+- repo: local
+  hooks:
+  - id: bats-tests
+    name: toggle_monitor_silence Tests
+    entry: tests/tmux_toggle_monitor_silence.bats
+    language: node
+    additional_dependencies:
+    - bats@1.11.0
+    files: ^(scripts|tests)/tmux_toggle_monitor_silence\..*
