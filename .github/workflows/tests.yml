@@ -1,0 +1,48 @@
+name: Tests & Linting
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y bats tmux
+
+    - name: Show tmux version
+      run: tmux -V
+
+    - name: Run BATS tests
+      run: bats tests/tmux_toggle_monitor_silence.bats
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install pre-commit
+      run: pip install pre-commit
+
+    - name: Run pre-commit hooks (pull_request)
+      if: github.event_name == 'pull_request'
+      env:
+        SKIP: bats-tests
+      run: pre-commit run --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.sha }}
+
+    - name: Run pre-commit hooks (push)
+      if: github.event_name == 'push'
+      env:
+        SKIP: bats-tests
+      run: pre-commit run --from-ref ${{ github.event.before }} --to-ref ${{ github.sha }}
