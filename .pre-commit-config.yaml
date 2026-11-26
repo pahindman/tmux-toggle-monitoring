@@ -27,8 +27,9 @@ repos:
   hooks:
   - id: bats-tests
     name: toggle_monitor_silence Tests
-    entry: tests/tmux_toggle_monitor_silence.bats
+    entry: bats tests/tmux_toggle_monitor_silence.bats
     language: node
     additional_dependencies:
     - bats@1.11.0
     files: ^(scripts|tests)/tmux_toggle_monitor_silence\..*
+    pass_filenames: false
